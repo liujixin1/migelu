@@ -15,6 +15,14 @@
           :value="item.value"
         ></el-option>
       </el-select>
+      <el-select v-model="search.type">
+        <el-option
+          v-for="item in type"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
       <el-button
         size="small"
         type="primary"
@@ -28,13 +36,14 @@
         type="primary"
         icon="el-icon-circle-plus"
         @click="addMsg()"
-      >新建轮播图</el-button>
+      >新建广告图</el-button>
     </div>
     <el-table :data="tableData" border style="width: 100%" empty-text="暂无数据">
       <el-table-column prop="sort" width="50px" label="序号" align="center"></el-table-column>
-      <el-table-column prop="name" label="名称" align="center"></el-table-column>
+      <el-table-column prop="name" label="广告图名称" align="center"></el-table-column>
       <el-table-column prop="isShow" label="是否显示" align="center"></el-table-column>
-      <el-table-column prop="redirect_url" label="跳转链接" align="center"></el-table-column>
+      <el-table-column prop="type_name" label="类型" align="center"></el-table-column>
+     
       <el-table-column label="图片地址" align="center">
         <template slot-scope="scope">
           <el-image :preview-src-list="srcList" style="width:100px" :src="scope.row.img_url" fit="contain-down"></el-image>
@@ -50,20 +59,20 @@
     </el-table>
     <!-- 分页 -->
     <pagination @page="handleSizeChange" @pagesize="handleCurrentChange" :pageData="pageData"></pagination>
-    <slidesList :addDialog="addDialog" @upData="getData"></slidesList>
+    <advertisingDialog :addDialog="addDialog" @upData="getData"></advertisingDialog>
   </div>
 </template>
 <script>
 import Pagination from "@/components/pagination";
 import PushDetailsDialog from "@/components/message/pushDetailsDialog";
-import SlidesList from "@/components/banner/slidesList";
+import AdvertisingDialog from "@/components/banner/advertisingDialog";
 
-import { index, destroy } from "@/api/banner/slidesList";
+import { index, destroy } from "@/api/banner/advertisingList";
 export default {
   components: {
     pagination: Pagination,
     pushDetailsDialog: PushDetailsDialog,
-    slidesList: SlidesList,
+    advertisingDialog: AdvertisingDialog,
   },
   data() {
     return {
@@ -91,6 +100,16 @@ export default {
           label: "显示",
         },
       ],
+      type:[
+          {
+          value: 1,
+          label: "绘本",
+        },
+        {
+          value: 2,
+          label: "儿歌",
+        },
+      ],
       addDialog: {
         centerDialogVisible: false,
         dialogType: "",
@@ -101,6 +120,7 @@ export default {
       search: {
         name: "",
         is_show: "",
+        type:1
       },
       multipleSelection: [],
       srcList: [],
@@ -118,7 +138,8 @@ export default {
         limit: this.pageData.pageSize,
         page: this.pageData.page,
         name: this.search.name,
-        is_show: this.search.is_show == -1 ? "" : this.search.is_show,
+        type: this.search.type,
+        is_show:this.search.is_show==-1?'':this.search.is_show
       };
       index(data)
         .then((res) => {

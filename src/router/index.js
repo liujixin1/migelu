@@ -197,12 +197,20 @@ export const asyncRoutes = [{
         },
         children: [{
             path: 'slidesList',
-            name: '首页轮播图',
+            name: '首页轮播图列表',
             id: 51,
             parentId: 50,
             component: () =>
                 import ('@/views/banner/slidesList/index'),
-            meta: { title: '首页轮播图', role: [] }
+            meta: { title: '首页轮播图列表', role: [] }
+        }, {
+            path: 'advertisingList',
+            name: '首页广告图列表',
+            id: 52,
+            parentId: 50,
+            component: () =>
+                import ('@/views/banner/advertisingList/index'),
+            meta: { title: '首页广告图列表', role: [] }
         }]
     },
     {
