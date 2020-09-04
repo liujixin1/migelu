@@ -214,6 +214,27 @@ export const asyncRoutes = [{
         }]
     },
     {
+        path: '/video',
+        component: Layout,
+        redirect: '/video/videoList',
+        name: '视频库',
+        id: 60,
+        meta: {
+            title: '视频库',
+            icon: 'video',
+            role: []
+        },
+        children: [{
+            path: 'videoList',
+            name: '视频库列表',
+            id: 61,
+            parentId: 60,
+            component: () =>
+                import ('@/views/video/videoList/index'),
+            meta: { title: '视频库列表', role: [] }
+        }]
+    },
+    {
         path: '*',
         name: '404',
         component: () =>

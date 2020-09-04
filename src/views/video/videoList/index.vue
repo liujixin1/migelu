@@ -5,23 +5,10 @@
         style="width:200px;margin-bottom:5px"
         v-model="search.name"
         clearable
-        placeholder="请输入名字"
+        placeholder="请输入名称"
       ></el-input>
-      <el-select v-model="search.is_show" placeholder="请选择是否显示">
-        <el-option
-          v-for="item in showList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
-      </el-select>
-      <el-select v-model="search.type">
-        <el-option
-          v-for="item in type"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
+      <el-select v-model="search.age_type" placeholder="请选择年龄阶段">
+        <el-option v-for="item in type" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <el-button
         size="small"
@@ -36,19 +23,26 @@
         type="primary"
         icon="el-icon-circle-plus"
         @click="addMsg()"
-      >新建广告图</el-button>
+      >新建视频</el-button>
     </div>
     <el-table :data="tableData" border style="width: 100%" empty-text="暂无数据">
       <el-table-column prop="sort" width="50px" label="序号" align="center"></el-table-column>
-      <el-table-column prop="name" label="广告图名称" align="center"></el-table-column>
-      <el-table-column prop="isShow" label="是否显示" align="center"></el-table-column>
-      <el-table-column prop="type_name" label="类型" align="center"></el-table-column>
-     
-      <el-table-column label="图片地址" align="center">
+      <el-table-column prop="name" label="名称" align="center"></el-table-column>
+      <el-table-column prop="video_url" label="视频路径" align="center"></el-table-column>
+      <el-table-column prop="age_type" label="年龄段" align="center"></el-table-column>
+      <el-table-column prop="watch_num" label="浏览次数" align="center"></el-table-column>
+      <el-table-column prop="long_time" label="时长" align="center"></el-table-column>
+      <el-table-column label="视频展示图" align="center">
         <template slot-scope="scope">
-          <el-image :preview-src-list="srcList" style="width:100px" :src="scope.row.img_url" fit="contain-down"></el-image>
+          <el-image
+            :preview-src-list="srcList"
+            style="width:100px"
+            :src="scope.row.img_url"
+            fit="contain-down"
+          ></el-image>
         </template>
       </el-table-column>
+
       <el-table-column prop="created_time" label="创建时间" align="center"></el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
@@ -65,7 +59,7 @@
 <script>
 import Pagination from "@/components/pagination";
 import AdvertisingDialog from "@/components/banner/advertisingDialog";
-import { index, destroy } from "@/api/banner/advertisingList";
+import { index, destroy } from "@/api/video/videoList";
 export default {
   components: {
     pagination: Pagination,
@@ -83,28 +77,23 @@ export default {
         total: null,
         layout: "total, sizes, prev, pager, next, jumper",
       },
-      showList: [
-        {
-          value: -1,
-          label: "全部",
-        },
-        {
-          value: 0,
-          label: "不显示",
-        },
+
+      type: [
         {
           value: 1,
-          label: "显示",
-        },
-      ],
-      type:[
-          {
-          value: 1,
-          label: "绘本",
+          label: "3-6岁",
         },
         {
           value: 2,
-          label: "儿歌",
+          label: "6-9岁",
+        },
+        {
+          value: 3,
+          label: "9-12岁",
+        },
+        {
+          value: 4,
+          label: "12-15岁",
         },
       ],
       addDialog: {
@@ -112,12 +101,10 @@ export default {
         dialogType: "",
         id: "",
       },
-     
       formData: {},
       search: {
         name: "",
-        is_show: "",
-        type:1
+        age_type: "",
       },
       multipleSelection: [],
       srcList: [],
@@ -135,14 +122,12 @@ export default {
         limit: this.pageData.pageSize,
         page: this.pageData.page,
         name: this.search.name,
-        type: this.search.type,
-        is_show:this.search.is_show==-1?'':this.search.is_show
+        age_type: this.search.age_type,
       };
       index(data)
         .then((res) => {
           if (res.code == 0) {
-            res.data.data.forEach((result) => {
-              result.isShow = result.is_show == 0 ? "不显示" : "显示";
+               res.data.data.forEach((result) => {
               this.srcList.push(result.img_url);
             });
             this.tableData = res.data.data;
@@ -219,7 +204,6 @@ export default {
   position: relative;
   height: 45px;
 }
-
 .add {
   position: absolute;
   right: 0;

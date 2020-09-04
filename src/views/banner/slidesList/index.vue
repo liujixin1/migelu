@@ -55,14 +55,11 @@
 </template>
 <script>
 import Pagination from "@/components/pagination";
-import PushDetailsDialog from "@/components/message/pushDetailsDialog";
 import SlidesList from "@/components/banner/slidesList";
-
 import { index, destroy } from "@/api/banner/slidesList";
 export default {
   components: {
     pagination: Pagination,
-    pushDetailsDialog: PushDetailsDialog,
     slidesList: SlidesList,
   },
   data() {
