@@ -53,17 +53,19 @@
     </el-table>
     <!-- 分页 -->
     <pagination @page="handleSizeChange" @pagesize="handleCurrentChange" :pageData="pageData"></pagination>
-    <advertisingDialog :addDialog="addDialog" @upData="getData"></advertisingDialog>
+    <addVideoDialog :addDialog="addDialog" @upData="getData"></addVideoDialog>
   </div>
 </template>
 <script>
+
+import * as qiniu from "qiniu-js";
 import Pagination from "@/components/pagination";
-import AdvertisingDialog from "@/components/banner/advertisingDialog";
+import AddVideoDialog from "@/components/video/addVideoDialog";
 import { index, destroy } from "@/api/video/videoList";
 export default {
   components: {
     pagination: Pagination,
-    advertisingDialog: AdvertisingDialog,
+    addVideoDialog: AddVideoDialog,
   },
   data() {
     return {

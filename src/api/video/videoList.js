@@ -31,3 +31,11 @@ export function store(data) {
         data
     })
 }
+//获取七牛云上传存储文件认证
+export function getUpToken(data) {
+    return request({
+        url: 'api/Common/getUpToken',
+        method: 'post',
+        data
+    })
+}
