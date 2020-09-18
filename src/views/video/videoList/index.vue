@@ -29,7 +29,7 @@
       <el-table-column prop="sort" width="50px" label="序号" align="center"></el-table-column>
       <el-table-column prop="name" label="名称" align="center"></el-table-column>
       <el-table-column prop="video_url" label="视频路径" align="center"></el-table-column>
-      <el-table-column prop="age_type" label="年龄段" align="center"></el-table-column>
+      <el-table-column prop="ageMsg" label="年龄段" align="center"></el-table-column>
       <el-table-column prop="watch_num" label="浏览次数" align="center"></el-table-column>
       <el-table-column prop="long_time" label="时长" align="center"></el-table-column>
       <el-table-column label="视频展示图" align="center">
@@ -131,7 +131,22 @@ export default {
           if (res.code == 0) {
                res.data.data.forEach((result) => {
               this.srcList.push(result.img_url);
+               switch(result.age_type){
+                 case 1:
+                   result.ageMsg = '3-6岁'
+                  return;
+                   case 2:
+                   result.ageMsg = '6-9岁'
+                  return;
+                   case 3:
+                   result.ageMsg = '9-12岁'
+                  return;
+                   case 4:
+                   result.ageMsg = '12-15岁'
+                  return;
+               }
             });
+           
             this.tableData = res.data.data;
             this.pageData.page = res.data.current_page;
             this.pageData.pagesize = res.data.per_page;
