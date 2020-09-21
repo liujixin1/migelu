@@ -31,6 +31,14 @@ export function store(data) {
         data
     })
 }
+//视频详情
+export function show(data) {
+    return request({
+        url: 'api/videostore/show',
+        method: 'post',
+        data
+    })
+}
 //获取七牛云上传存储文件认证
 export function getUpToken(data) {
     return request({

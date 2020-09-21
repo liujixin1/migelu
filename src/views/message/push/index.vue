@@ -66,14 +66,12 @@
     <pagination @page="handleSizeChange" @pagesize="handleCurrentChange" :pageData="pageData"></pagination>
     <pushDetailsDialog :dialog="dialog"></pushDetailsDialog>
     <addMsgDialog :addDialog="addDialog" @upData="getData"></addMsgDialog>
-    <showImgDialog :imgDialog="imgDialog"></showImgDialog>
   </div>
 </template>
 <script>
 import Pagination from "@/components/pagination";
 import PushDetailsDialog from "@/components/message/pushDetailsDialog";
 import AddMsgDialog from "@/components/message/addMsgDialog";
-
 import { popupadv, destroy } from "@/api/message/push";
 export default {
   components: {

@@ -58,7 +58,7 @@
 <script>
 import { Loading } from "element-ui";
 
-import { getUpToken, updata, store } from "@/api/video/videoList";
+import { getUpToken, updata, store, show } from "@/api/video/videoList";
 import { getToken } from "@/utils/auth";
 import Pagination from "@/components/pagination";
 // require("qiniu-js/dist/qiniu.min.js");
@@ -121,6 +121,7 @@ export default {
       imgUrl: "",
       imgStatus: false,
       domain: "",
+      num: 1,
     };
   },
   created() {
@@ -131,8 +132,13 @@ export default {
   methods: {
     getData() {
       this.getToken(() => {
-        this.initUploader();
-        this.initUploader_img();
+        this.num += 1;
+        if (this.num > 2) {
+          return;
+        } else {
+          this.initUploader();
+          this.initUploader_img();
+        }
       });
       if (this.addDialog.dialogType == "edit") {
         let data = {
@@ -142,11 +148,14 @@ export default {
           if (res.code == 0) {
             this.form = {
               name: res.data.name,
-              redirect_url: res.data.redirect_url,
-              // is_show: res.data.is_show + "",
-              imageUrl: res.data.img_url,
+              date: res.data.long_time,
               sort: res.data.sort,
+              age_type: res.data.age_type,
             };
+            this.videoUrl = res.data.video_url;
+            this.videoStatus = true;
+            this.imgUrl = res.data.img_url;
+            this.imgStatus = true;
           }
         });
       }
@@ -155,9 +164,14 @@ export default {
       this.addDialog.centerDialogVisible = false;
       this.form = {
         name: "",
-        imageUrl: "",
-        sort: "",
+        age_type: "",
+        sort: 0,
+        date: 0,
       };
+      this.videoUrl = "";
+      this.videoStatus = false;
+      this.imgUrl = "";
+      this.imgStatus = false;
     },
 
     //提交
@@ -169,7 +183,7 @@ export default {
               message: "请上传视频封面",
               type: "info",
             });
-          }else if(!this.videoUrl) {
+          } else if (!this.videoUrl) {
             this.$message({
               message: "请上传视频",
               type: "info",
