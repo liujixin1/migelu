@@ -28,23 +28,6 @@ export const asyncRoutes = [{
         }]
     },
     {
-        path: '/answer',
-        component: Layout,
-        redirect: '/answer',
-        name: '测评列表',
-        id: 20,
-        meta: { title: '', icon: 'code', role: [] },
-        children: [{
-            path: 'answer',
-            name: '测评列表',
-            id: 21,
-            parentId: 20,
-            component: () =>
-                import ('@/views/answer/index'),
-            meta: { title: '测评列表', role: [] }
-        }]
-    },
-    {
         path: '/campus',
         component: Layout,
         redirect: '/campus',
@@ -61,6 +44,95 @@ export const asyncRoutes = [{
             meta: { title: '校区列表', role: [] }
         }]
     },
+    {
+        path: '/banner',
+        component: Layout,
+        redirect: '/banner/slidesList',
+        name: 'banner图',
+        id: 50,
+        meta: {
+            title: 'banner图',
+            icon: 'img',
+            role: []
+        },
+        children: [{
+            path: 'slidesList',
+            name: '首页轮播图列表',
+            id: 51,
+            parentId: 50,
+            component: () =>
+                import ('@/views/banner/slidesList/index'),
+            meta: { title: '首页轮播图列表', role: [] }
+        }, {
+            path: 'advertisingList',
+            name: '首页广告图列表',
+            id: 52,
+            parentId: 50,
+            component: () =>
+                import ('@/views/banner/advertisingList/index'),
+            meta: { title: '首页广告图列表', role: [] }
+        }]
+    },
+    {
+        path: '/message',
+        component: Layout,
+        redirect: '/message/push',
+        name: '消息推送',
+        id: 30,
+        meta: {
+            title: '消息推送',
+            icon: 'msg',
+            role: []
+        },
+        children: [{
+            path: 'push',
+            name: '弹窗消息',
+            id: 31,
+            parentId: 30,
+            component: () =>
+                import ('@/views/message/push/index'),
+            meta: { title: '弹窗消息', role: [] }
+        }]
+    },
+    {
+        path: '/video',
+        component: Layout,
+        redirect: '/video/videoList',
+        name: '视频库',
+        id: 60,
+        meta: {
+            title: '视频库',
+            icon: 'video',
+            role: []
+        },
+        children: [{
+            path: 'videoList',
+            name: '视频库列表',
+            id: 61,
+            parentId: 60,
+            component: () =>
+                import ('@/views/video/videoList/index'),
+            meta: { title: '视频库列表', role: [] }
+        }]
+    },
+    {
+        path: '/answer',
+        component: Layout,
+        redirect: '/answer',
+        name: '测评列表',
+        id: 20,
+        meta: { title: '', icon: 'code', role: [] },
+        children: [{
+            path: 'answer',
+            name: '测评列表',
+            id: 21,
+            parentId: 20,
+            component: () =>
+                import ('@/views/answer/index'),
+            meta: { title: '测评列表', role: [] }
+        }]
+    },
+
     {
         path: '/',
         component: Layout,
@@ -164,77 +236,6 @@ export const asyncRoutes = [{
         }]
     },
     {
-        path: '/message',
-        component: Layout,
-        redirect: '/message/push',
-        name: '消息推送',
-        id: 30,
-        meta: {
-            title: '消息推送',
-            icon: 'msg',
-            role: []
-        },
-        children: [{
-            path: 'push',
-            name: '弹窗消息',
-            id: 31,
-            parentId: 30,
-            component: () =>
-                import ('@/views/message/push/index'),
-            meta: { title: '弹窗消息', role: [] }
-        }]
-    },
-    {
-        path: '/banner',
-        component: Layout,
-        redirect: '/banner/slidesList',
-        name: 'banner图',
-        id: 50,
-        meta: {
-            title: 'banner图',
-            icon: 'img',
-            role: []
-        },
-        children: [{
-            path: 'slidesList',
-            name: '首页轮播图列表',
-            id: 51,
-            parentId: 50,
-            component: () =>
-                import ('@/views/banner/slidesList/index'),
-            meta: { title: '首页轮播图列表', role: [] }
-        }, {
-            path: 'advertisingList',
-            name: '首页广告图列表',
-            id: 52,
-            parentId: 50,
-            component: () =>
-                import ('@/views/banner/advertisingList/index'),
-            meta: { title: '首页广告图列表', role: [] }
-        }]
-    },
-    {
-        path: '/video',
-        component: Layout,
-        redirect: '/video/videoList',
-        name: '视频库',
-        id: 60,
-        meta: {
-            title: '视频库',
-            icon: 'video',
-            role: []
-        },
-        children: [{
-            path: 'videoList',
-            name: '视频库列表',
-            id: 61,
-            parentId: 60,
-            component: () =>
-                import ('@/views/video/videoList/index'),
-            meta: { title: '视频库列表', role: [] }
-        }]
-    },
-    {
         path: '*',
         name: '404',
         component: () =>
@@ -242,7 +243,6 @@ export const asyncRoutes = [{
         hidden: true
     }
 ]
-
 const createRouter = () => new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
