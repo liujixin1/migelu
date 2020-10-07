@@ -39,3 +39,11 @@ export function destroy(data) {
         data
     })
 }
+//视频库下拉框
+export function getSelectVideo(data) {
+    return request({
+        url: 'api/select/getSelectVideo',
+        method: 'post',
+        data
+    })
+}

@@ -13,11 +13,19 @@
         <el-form-item label="广告图名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入消息标题" />
         </el-form-item>
-        
-        <el-form-item label="视频id串" prop="video_id">
-          <el-input v-model="form.video_id" placeholder="请输入视频id串" />
+
+        <el-form-item label="视频id串">
+          <el-select style="width:500px" v-model="form.video_id" multiple placeholder="请选择视频">
+            <el-option
+              v-for="item in videoList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <!-- <el-input v-model="form.video_id" placeholder="请输入视频id串" /> -->
         </el-form-item>
-        
+
         <el-form-item label="是否显示：" prop="is_show">
           <el-radio-group v-model="form.is_show">
             <el-radio label="1">是</el-radio>
@@ -64,16 +72,21 @@
   </div>
 </template>
 <script>
-import { add, show, update } from "@/api/banner/advertisingList";
+import {
+  add,
+  show,
+  update,
+  getSelectVideo
+} from "@/api/banner/advertisingList";
 import { getToken } from "@/utils/auth";
 import Pagination from "@/components/pagination";
 
 export default {
   props: {
-    addDialog: Object,
+    addDialog: Object
   },
   components: {
-    pagination: Pagination,
+    pagination: Pagination
   },
   data() {
     return {
@@ -83,7 +96,7 @@ export default {
         pageSize: 10,
         page: 1,
         total: null,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, sizes, prev, pager, next, jumper"
       },
       form: {
         name: "",
@@ -91,28 +104,29 @@ export default {
         is_show: "1",
         imageUrl: "",
         sort: "",
-        video_id: "",
+        video_id: []
       },
       type: [
         {
           value: 1,
-          label: "绘本",
+          label: "绘本"
         },
         {
           value: 2,
-          label: "儿歌",
-        },
+          label: "儿歌"
+        }
       ],
       rules: {
         name: [
-          { required: true, message: "请输入banner标题", trigger: "blur" },
+          { required: true, message: "请输入banner标题", trigger: "blur" }
         ],
         video_id: [
-          { required: true, message: "请输入视频id串", trigger: "blur" },
-        ],
+          { required: true, message: "请输入视频id串", trigger: "blur" }
+        ]
         // imageUrl: [{ required: true, message: "请上传图片", trigger: "change" }]
       },
       baseUrl: "",
+      videoList: []
     };
   },
   created() {
@@ -121,35 +135,53 @@ export default {
     this.baseUrl = url.substring(0, endlength);
   },
   methods: {
+    getVideo() {
+      let data = {
+        name: "",
+        limit: 1000,
+        page: 1
+      };
+      getSelectVideo(data).then(res => {
+        res.data.data.forEach(item => {
+          this.videoList.push({
+            value: item.id + "",
+            label: item.name
+          });
+        });
+      });
+    },
     getData() {
       if (this.addDialog.dialogType == "edit") {
         let data = {
-          id: this.addDialog.id,
+          id: this.addDialog.id
         };
-        show(data).then((res) => {
+        show(data).then(res => {
           if (res.code == 0) {
             this.form = {
               name: res.data.name,
-              video_id: res.data.video_id,
+              video_id: res.data.video_id.split(","),
               is_show: res.data.is_show + "",
               imageUrl: res.data.img_url,
               sort: res.data.sort,
-              type:res.data.type,
+              type: res.data.type
             };
+            console.log(this.form);
           }
         });
       }
+      this.getVideo();
     },
     hideDialog() {
       this.addDialog.centerDialogVisible = false;
       this.form = {
-         name: "",
+        name: "",
         type: 1,
         is_show: "1",
         imageUrl: "",
         sort: "",
-        video_id: "",
+        video_id: []
       };
+      this.videoList = []
     },
     //图片上传
     handleAvatarSuccess(param) {
@@ -161,11 +193,11 @@ export default {
       data.append("opt", "single");
       data.append("token", getToken());
       console.log(data);
-      this.$axios.post("api/Common/uploadImg", data).then((res) => {
+      this.$axios.post("api/Common/uploadImg", data).then(res => {
         if (res.data.code == 0) {
           this.$message({
             message: res.data.message || res.data.msg,
-            type: "success",
+            type: "success"
           });
           this.form.imageUrl = res.data.data.url;
         }
@@ -174,54 +206,54 @@ export default {
 
     //提交
     confirm() {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["form"].validate(valid => {
         if (valid) {
           if (!this.form.imageUrl) {
             this.$message({
               message: "请上传图片",
-              type: "info",
+              type: "info"
             });
           } else {
             let data = {
               name: this.form.name,
-              video_id: this.form.video_id,
+              video_id: this.form.video_id.join(","),
               is_show: this.form.is_show,
               img_url: this.form.imageUrl,
               sort: this.form.sort,
-              type:this.form.type
+              type: this.form.type
             };
             console.log(data);
             // return;
             if (this.addDialog.dialogType == "edit") {
               data.id = this.addDialog.id;
-              update(data).then((res) => {
+              update(data).then(res => {
                 if (res.code == 0) {
                   this.$message({
                     message: res.message,
-                    type: "success",
+                    type: "success"
                   });
                   this.hideDialog();
                   this.$emit("upData");
                 } else {
                   this.$message({
                     message: res.message,
-                    type: "error",
+                    type: "error"
                   });
                 }
               });
             } else {
-              add(data).then((res) => {
+              add(data).then(res => {
                 if (res.code == 0) {
                   this.$message({
                     message: res.message,
-                    type: "success",
+                    type: "success"
                   });
                   this.hideDialog();
                   this.$emit("upData");
                 } else {
                   this.$message({
                     message: res.message,
-                    type: "error",
+                    type: "error"
                   });
                 }
               });
@@ -233,8 +265,8 @@ export default {
     //取消
     cancel() {
       this.hideDialog();
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

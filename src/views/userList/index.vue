@@ -41,7 +41,22 @@
       <el-table-column prop="nyk_student_id" label="飞博学员id" align="center"></el-table-column>
       <el-table-column prop="nyk_student_number" label="飞博学员编号" align="center"></el-table-column>
       <el-table-column prop="last_login_time" label="最后登录时间" align="center"></el-table-column>
-
+      <el-table-column label="会员状态" width="150" align="center">
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.is_vip"
+            @change="changeVip(scope,scope.row.is_vip)"
+            placeholder="请选择类型"
+          >
+            <el-option
+              v-for="item in option"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column label="学员类型" width="150" align="center">
         <template slot-scope="scope">
           <el-select
@@ -68,7 +83,7 @@
 <script>
 import AddUserDialog from "@/components/userList/addUserDialog";
 import Pagination from "@/components/pagination";
-import { userList, changeType } from "@/api/userList";
+import { userList, changeType,changeVip } from "@/api/userList";
 export default {
   components: {
     pagination: Pagination,
@@ -106,6 +121,16 @@ export default {
           value: 3,
           label: "米格鲁学员"
         }
+      ],
+      option: [
+        {
+          value: 1,
+          label: "会员"
+        },
+        {
+          value: 0,
+          label: "非会员"
+        }
       ]
     };
   },
@@ -118,8 +143,8 @@ export default {
       let data = {
         limit: this.pageData.pageSize,
         page: this.pageData.page,
-        searchName: this.searchName,
-        searchPhone: this.searchPhone
+        username: this.searchName,
+        phone: this.searchPhone
       };
 
       userList(data)
@@ -141,6 +166,27 @@ export default {
         type: type
       };
       changeType(data).then(res => {
+        if (res.code == 0) {
+          this.$message({
+            type: "success",
+            message: res.msg || res.message
+          });
+        } else {
+          this.getData();
+          this.$message({
+            type: "info",
+            message: res.msg || res.message
+          });
+        }
+      });
+    },
+    //会员状态
+    changeVip(scope, vip){
+      let data = {
+        id: scope.row.id,
+        is_vip: vip
+      };
+      changeVip(data).then(res => {
         if (res.code == 0) {
           this.$message({
             type: "success",

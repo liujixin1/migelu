@@ -9,7 +9,7 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope)">删除</el-button>
+          <!-- <el-button size="mini" type="danger" @click="handleDelete(scope)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -92,34 +92,34 @@ export default {
       this.dialog.id = scope.row.id;
     },
     //删除
-    handleDelete(scope) {
-      let data = {
-        id: scope.row.id
-      };
-      console.log(data);
-      this.$confirm("是否删除该条信息?", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          deleteSchool(data).then(res => {
-            if (res.code == 0) {
-              this.getData();
-              this.$message({
-                type: "success",
-                message: res.message|| res.msg
-              });
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
-    },
+    // handleDelete(scope) {
+    //   let data = {
+    //     id: scope.row.id
+    //   };
+    //   console.log(data);
+    //   this.$confirm("是否删除该条信息?", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning"
+    //   })
+    //     .then(() => {
+    //       deleteSchool(data).then(res => {
+    //         if (res.code == 0) {
+    //           this.getData();
+    //           this.$message({
+    //             type: "success",
+    //             message: res.message|| res.msg
+    //           });
+    //         }
+    //       });
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: "info",
+    //         message: "已取消删除"
+    //       });
+    //     });
+    // },
     //每页多少条
     handleCurrentChange(val) {
       this.pageData.page = 1;

@@ -31,9 +31,9 @@
       >新建轮播图</el-button>
     </div>
     <el-table :data="tableData" border style="width: 100%" empty-text="暂无数据">
-      <el-table-column prop="sort" width="50px" label="序号" align="center"></el-table-column>
       <el-table-column prop="name" label="名称" align="center"></el-table-column>
       <el-table-column prop="isShow" label="是否显示" align="center"></el-table-column>
+      <el-table-column prop="sort" width="50px" label="排序" align="center"></el-table-column>
       <el-table-column prop="redirect_url" label="跳转链接" align="center"></el-table-column>
       <el-table-column label="图片地址" align="center">
         <template slot-scope="scope">

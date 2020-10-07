@@ -31,7 +31,7 @@
         @click="handleSearch()"
       >查询</el-button>
       <el-button
-        class="add"
+       
         size="small"
         type="primary"
         icon="el-icon-circle-plus"
@@ -39,10 +39,10 @@
       >新建广告图</el-button>
     </div>
     <el-table :data="tableData" border style="width: 100%" empty-text="暂无数据">
-      <el-table-column prop="sort" width="50px" label="序号" align="center"></el-table-column>
       <el-table-column prop="name" label="广告图名称" align="center"></el-table-column>
       <el-table-column prop="isShow" label="是否显示" align="center"></el-table-column>
       <el-table-column prop="type_name" label="类型" align="center"></el-table-column>
+      <el-table-column prop="sort" width="50px" label="排序" align="center"></el-table-column>
      
       <el-table-column label="图片地址" align="center">
         <template slot-scope="scope">
@@ -97,7 +97,10 @@ export default {
           label: "显示",
         },
       ],
-      type:[
+      type:[{
+          value: -1,
+          label: "全部",
+        },
           {
           value: 1,
           label: "绘本",
@@ -117,7 +120,7 @@ export default {
       search: {
         name: "",
         is_show: "",
-        type:1
+        type:-1
       },
       multipleSelection: [],
       srcList: [],
@@ -135,7 +138,8 @@ export default {
         limit: this.pageData.pageSize,
         page: this.pageData.page,
         name: this.search.name,
-        type: this.search.type,
+        // type: this.search.type ==-1?'':this.search.type,
+        type: 1,
         is_show:this.search.is_show==-1?'':this.search.is_show
       };
       index(data)

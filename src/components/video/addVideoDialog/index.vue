@@ -40,8 +40,19 @@
         </el-form-item>
         <el-form-item label="上传视频：">
           <div class="upload">
-            <video :src="videoUrl" v-if="videoStatus" controls="controls">您的浏览器不支持视频播放</video>
+            <video
+              style="width:80%"
+              :src="videoUrl"
+              v-if="videoStatus"
+              controls="controls"
+            >您的浏览器不支持视频播放</video>
             <div id="video_container">
+              <el-input
+                style="margin-bottom:5px"
+                @change="showVideo"
+                v-model="videoUrl"
+                placeholder="请输入视频地址"
+              />
               <el-button id="videoPickfiles" type="primary">选择视频</el-button>
               <div></div>
             </div>
@@ -65,10 +76,10 @@ import Pagination from "@/components/pagination";
 
 export default {
   props: {
-    addDialog: Object,
+    addDialog: Object
   },
   components: {
-    pagination: Pagination,
+    pagination: Pagination
   },
   data() {
     return {
@@ -78,34 +89,34 @@ export default {
         pageSize: 10,
         page: 1,
         total: null,
-        layout: "total, sizes, prev, pager, next, jumper",
+        layout: "total, sizes, prev, pager, next, jumper"
       },
       form: {
         name: "",
         age_type: "",
         sort: 0,
-        date: 0,
+        date: 0
       },
       type: [
         {
           value: 1,
-          label: "3-6岁",
+          label: "3-6岁"
         },
         {
           value: 2,
-          label: "6-9岁",
+          label: "6-9岁"
         },
         {
           value: 3,
-          label: "9-12岁",
+          label: "9-12岁"
         },
         {
           value: 4,
-          label: "12-15岁",
-        },
+          label: "12-15岁"
+        }
       ],
       rules: {
-        name: [{ required: true, message: "请输入视频名称", trigger: "blur" }],
+        name: [{ required: true, message: "请输入视频名称", trigger: "blur" }]
       },
       baseUrl: "",
 
@@ -121,7 +132,7 @@ export default {
       imgUrl: "",
       imgStatus: false,
       domain: "",
-      num: 1,
+      num: 1
     };
   },
   created() {
@@ -142,15 +153,15 @@ export default {
       });
       if (this.addDialog.dialogType == "edit") {
         let data = {
-          id: this.addDialog.id,
+          id: this.addDialog.id
         };
-        show(data).then((res) => {
+        show(data).then(res => {
           if (res.code == 0) {
             this.form = {
               name: res.data.name,
               date: res.data.long_time,
               sort: res.data.sort,
-              age_type: res.data.age_type,
+              age_type: res.data.age_type
             };
             this.videoUrl = res.data.video_url;
             this.videoStatus = true;
@@ -160,13 +171,20 @@ export default {
         });
       }
     },
+    showVideo() {
+      if (this.videoUrl) {
+        this.videoStatus = true;
+      } else {
+        this.videoStatus = false;
+      }
+    },
     hideDialog() {
       this.addDialog.centerDialogVisible = false;
       this.form = {
         name: "",
         age_type: "",
         sort: 0,
-        date: 0,
+        date: 0
       };
       this.videoUrl = "";
       this.videoStatus = false;
@@ -176,17 +194,17 @@ export default {
 
     //提交
     confirm() {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["form"].validate(valid => {
         if (valid) {
           if (!this.imgUrl) {
             this.$message({
               message: "请上传视频封面",
-              type: "info",
+              type: "info"
             });
           } else if (!this.videoUrl) {
             this.$message({
               message: "请上传视频",
-              type: "info",
+              type: "info"
             });
           } else {
             let data = {
@@ -195,40 +213,40 @@ export default {
               img_url: this.imgUrl,
               long_time: this.form.date,
               sort: this.form.sort,
-              age_type: this.form.age_type,
+              age_type: this.form.age_type
             };
             console.log(data);
             // return;
             if (this.addDialog.dialogType == "edit") {
               data.id = this.addDialog.id;
-              updata(data).then((res) => {
+              updata(data).then(res => {
                 if (res.code == 0) {
                   this.$message({
                     message: res.message,
-                    type: "success",
+                    type: "success"
                   });
                   this.hideDialog();
                   this.$emit("upData");
                 } else {
                   this.$message({
                     message: res.message,
-                    type: "error",
+                    type: "error"
                   });
                 }
               });
             } else {
-              store(data).then((res) => {
+              store(data).then(res => {
                 if (res.code == 0) {
                   this.$message({
                     message: res.message,
-                    type: "success",
+                    type: "success"
                   });
                   this.hideDialog();
                   this.$emit("upData");
                 } else {
                   this.$message({
                     message: res.message,
-                    type: "error",
+                    type: "error"
                   });
                 }
               });
@@ -272,34 +290,34 @@ export default {
           prevent_duplicates: false,
           // Specify what files to browse for
           mime_types: [
-            { title: "视频格式", extensions: "mp4" }, // 限定文件后缀上传格式上传
-          ],
+            { title: "视频格式", extensions: "mp4" } // 限定文件后缀上传格式上传
+          ]
         },
         init: {
-          Key: function (up, files) {
+          Key: function(up, files) {
             // return _this.videoName;
           },
-          FilesAdded: function (up, files) {
-            plupload.each(files, function (file) {
+          FilesAdded: function(up, files) {
+            plupload.each(files, function(file) {
               // 文件添加进队列后，处理相关的事情
               console.log("FilesAdded");
               // _this.fileSize = _this.toDecimal(file.size);
             });
           },
-          BeforeUpload: function (up, file) {
+          BeforeUpload: function(up, file) {
             console.log("BeforeUpload");
           },
-          ChunkUploaded: function (up, file, info) {
+          ChunkUploaded: function(up, file, info) {
             console.log("ChunkUploaded");
           },
-          UploadProgress: function (up, file) {
+          UploadProgress: function(up, file) {
             // 每个文件上传时，处理相关的事情
             login[0]();
             _this.filePercent = parseInt(file.percent);
             _this.fileLoaded = plupload.formatSize(file.loaded).toUpperCase();
             _this.fileSpeed = plupload.formatSize(file.speed).toUpperCase();
           },
-          FileUploaded: function (up, file, info) {
+          FileUploaded: function(up, file, info) {
             console.log("FileUploaded");
             console.log(file, 1111);
             login[1]();
@@ -307,7 +325,7 @@ export default {
             if (response.code == 0) {
               _this.$message({
                 type: "success",
-                message: "上传成功",
+                message: "上传成功"
               });
               _this.videoUrl = response.data.url;
               _this.videoStatus = true;
@@ -315,26 +333,26 @@ export default {
               _this.videoStatus = false;
             }
           },
-          Error: function (up, err, errTip) {
+          Error: function(up, err, errTip) {
             // 上传出错时，处理相关的事情
             login[0]();
             _this.$message({
               type: "info",
-              message: err,
+              message: err
             });
             _this.$message({
               type: "info",
-              message: errTip,
+              message: errTip
             });
           },
-          UploadComplete: function () {
+          UploadComplete: function() {
             // 队列文件处理完毕后，处理相关的事情
             // _this.$message({
             //   type: "success",
             //   message:'' ,
             // });
-          },
-        },
+          }
+        }
       });
     },
     //图片上传
@@ -368,40 +386,40 @@ export default {
           prevent_duplicates: false,
           // Specify what files to browse for
           mime_types: [
-            { title: "图片格式", extensions: "jpg,png" }, // 限定文件后缀上传格式上传
-          ],
+            { title: "图片格式", extensions: "jpg,png" } // 限定文件后缀上传格式上传
+          ]
         },
         init: {
-          Key: function (up, files) {
+          Key: function(up, files) {
             // return _this.videoName;
           },
-          FilesAdded: function (up, files) {
-            plupload.each(files, function (file) {
+          FilesAdded: function(up, files) {
+            plupload.each(files, function(file) {
               // 文件添加进队列后，处理相关的事情
               console.log("FilesAdded");
             });
           },
-          BeforeUpload: function (up, file) {
+          BeforeUpload: function(up, file) {
             console.log("BeforeUpload");
           },
-          ChunkUploaded: function (up, file, info) {
+          ChunkUploaded: function(up, file, info) {
             console.log("ChunkUploaded");
           },
-          UploadProgress: function (up, file) {
+          UploadProgress: function(up, file) {
             // 每个文件上传时，处理相关的事情
             login[0]();
             _this.filePercent = parseInt(file.percent);
             _this.fileLoaded = plupload.formatSize(file.loaded).toUpperCase();
             _this.fileSpeed = plupload.formatSize(file.speed).toUpperCase();
           },
-          FileUploaded: function (up, file, info) {
+          FileUploaded: function(up, file, info) {
             console.log("FileUploaded");
             login[1]();
             let response = JSON.parse(info.response);
             if (response.code == 0) {
               _this.$message({
                 type: "success",
-                message: "上传成功",
+                message: "上传成功"
               });
               _this.imgUrl = response.data.url;
               _this.imgStatus = true;
@@ -409,26 +427,26 @@ export default {
               _this.imgStatus = false;
             }
           },
-          Error: function (up, err, errTip) {
+          Error: function(up, err, errTip) {
             // 上传出错时，处理相关的事情
             login[0]();
             _this.$message({
               type: "info",
-              message: err,
+              message: err
             });
             _this.$message({
               type: "info",
-              message: errTip,
+              message: errTip
             });
           },
-          UploadComplete: function () {
+          UploadComplete: function() {
             // 队列文件处理完毕后，处理相关的事情
             // _this.$message({
             //   type: "success",
             //   message:'' ,
             // });
-          },
-        },
+          }
+        }
       });
     },
     login() {
@@ -439,7 +457,7 @@ export default {
           lock: true,
           text: "Loading",
           spinner: "el-icon-loading",
-          background: "rgba(0, 0, 0, 0.1)",
+          background: "rgba(0, 0, 0, 0.1)"
         });
       }
       function endLoading() {
@@ -452,13 +470,13 @@ export default {
       // this.videoName = new Date().getTime() + ".mp4";
       // this.ImgName = new Date().getTime() + ".jpg";
 
-      getUpToken().then((res) => {
+      getUpToken().then(res => {
         this.token = res.data.uptoken;
         this.domain = res.data.domain;
         callback();
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

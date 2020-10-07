@@ -14,6 +14,13 @@ export function changeType(data) {
     data
   })
 }
+export function changeVip(data) {
+  return request({
+    url: 'api/users/changeVip',
+    method: 'post',
+    data
+  })
+}
 export function addUser(data) {
   return request({
     url: 'api/users/store',
