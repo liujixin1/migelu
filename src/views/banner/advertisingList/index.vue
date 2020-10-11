@@ -15,7 +15,7 @@
           :value="item.value"
         ></el-option>
       </el-select>
-      <el-select v-model="search.type">
+      <el-select v-model="search.type" placeholder="请选择类型">
         <el-option
           v-for="item in type"
           :key="item.value"
@@ -120,7 +120,7 @@ export default {
       search: {
         name: "",
         is_show: "",
-        type:-1
+        type:''
       },
       multipleSelection: [],
       srcList: [],
@@ -138,8 +138,8 @@ export default {
         limit: this.pageData.pageSize,
         page: this.pageData.page,
         name: this.search.name,
-        // type: this.search.type ==-1?'':this.search.type,
-        type: 1,
+        type: this.search.type ==-1?'':this.search.type,
+        // type: 1,
         is_show:this.search.is_show==-1?'':this.search.is_show
       };
       index(data)
