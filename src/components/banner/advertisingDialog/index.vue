@@ -21,15 +21,69 @@
         </el-form-item>
 
         <el-form-item label="视频id串">
-          <el-transfer
+          <el-select
+            size="small"
+            v-model="inside.value"
+            :multiple="false"
             filterable
-            :filter-method="filterMethod"
-            filter-placeholder="请输入城市拼音"
+            remote
+            center
+            reserve-keyword
+            placeholder="请选择视频"
+            :remote-method="insideRemoteMethod"
+            :loading="inside.loading"
+            style="width: 300px"
+            @change="getOptionId(inside.value)"
+          >
+            <el-option
+              v-for="item in inside.options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+          <el-button
+            size="small"
+            type="primary"
+            icon="el-icon-circle-plus"
+            @click="addVideo()"
+            >添加</el-button
+          >
+          <div class="itemList">
+            <el-tag
+              v-for="tag in tags"
+              :key="tag.name"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)"
+              :type="tag.type"
+            >
+              {{ tag.name }}
+            </el-tag>
+          </div>
+
+          <!-- <div style="margin-bottom: 5px">
+            <el-input
+              v-model="videoName"
+              placeholder="请输入消息标题"
+              style="width: 200px"
+            />
+            <el-button
+              size="small"
+              type="primary"
+              icon="el-icon-search"
+              class="handleSearch"
+              @click="handleSearch()"
+              >查询</el-button
+            >
+          </div>
+          <el-transfer
+            :titles="['视频列表1', '视频列表2']"
             v-model="form.video_id"
-             @change="handleChange"
+            @change="handleChange"
             :data="videoList"
           >
-          </el-transfer>
+          </el-transfer> -->
           <!-- <el-select style="width:500px" v-model="form.video_id" multiple placeholder="请选择视频">
             <el-option
               v-for="item in videoList"
@@ -79,8 +133,8 @@
             </el-upload>
           </div>
           <div class="uploadMsg">
-            <div>全屏图片应小于200KB，尺寸为290*350，格式为PNG格式。</div>
-            <div>居中小图应小于200KB，尺寸为230*320，格式为PNG格式。</div>
+            <div>全屏图片应小于200KB，尺寸为670*260，格式为PNG格式。</div>
+            <div>居中小图应小于200KB，尺寸为320*186，格式为PNG格式。</div>
           </div>
         </el-form-item>
       </el-form>
@@ -124,7 +178,7 @@ export default {
         is_show: "1",
         imageUrl: "",
         sort: "",
-        video_id: [],
+        // video_id: [],
       },
       type: [
         {
@@ -136,17 +190,23 @@ export default {
           label: "儿歌",
         },
       ],
+      baseUrl: "",
+      // videoList: [],
+      inside: {
+        innerVisible: false,
+        options: [],
+        list: [],
+        loading: false,
+      },
+      tags: [],
+      videoItme: {},
       rules: {
         name: [
           { required: true, message: "请输入banner标题", trigger: "blur" },
         ],
-        video_id: [
-          { required: true, message: "请输入视频id串", trigger: "blur" },
-        ],
+        // tags: [{ required: true, message: "请输入视频id串", trigger: "blur" }],
         // imageUrl: [{ required: true, message: "请上传图片", trigger: "change" }]
       },
-      baseUrl: "",
-      videoList: [],
     };
   },
   created() {
@@ -155,22 +215,40 @@ export default {
     this.baseUrl = url.substring(0, endlength);
   },
   methods: {
-    getVideo(query = '') {
+    //获取修改数据
+    getVideoData() {
       let data = {
-        name: query,
-        limit: 1000,
+        name: "",
         page: 1,
+        limit: 50,
       };
+      //获取视频列表
       getSelectVideo(data).then((res) => {
-        res.data.data.forEach((item,index) => {
-          this.videoList.push({
-            value: item.id + "",
-            key: index,
-            label: item.name,
-          });
+        this.inside.options = res.data.data.map((item) => {
+          return { value: `${item.id}`, label: `${item.name}` };
         });
       });
     },
+    // getVideo(query = "") {
+    //   let data = {
+    //     name: query,
+    //     limit: 1000,
+    //     page: 1,
+    //   };
+    //   getSelectVideo(data).then((res) => {
+    //     res.data.data.forEach((item, index) => {
+    //       this.videoList.push({
+    //         value: item.id + "",
+    //         key: index,
+    //         label: item.name,
+    //       });
+    //     });
+    //   });
+    // },
+    // handleSearch() {
+    //   this.videoList = [];
+    //   this.getVideo(this.videoName);
+    // },
     getData() {
       if (this.addDialog.dialogType == "edit") {
         let data = {
@@ -180,17 +258,46 @@ export default {
           if (res.code == 0) {
             this.form = {
               name: res.data.name,
-              video_id: res.data.video_id.split(","),
+              // video_id: res.data.video_id.split(","),
               is_show: res.data.is_show + "",
               imageUrl: res.data.img_url,
               sort: res.data.sort,
               type: res.data.type,
             };
-            console.log(this.form);
+            this.tags = res.data.videoInfo;
           }
         });
       }
-      this.getVideo();
+      this.getVideoData();
+    },
+    getOptionId(e) {
+      let arr = this.inside.options.filter((res) => {
+        return res.value == e;
+      });
+      this.videoItme = { name: arr[0].label, id: arr[0].value };
+    },
+    // 搜索视频列表
+    insideRemoteMethod(query) {
+      if (query !== "") {
+        this.getSupplierList(query);
+      } else {
+        this.inside.options = [];
+      }
+    },
+    //获取视频列表数据
+    getSupplierList(query) {
+      let data = {
+        name: query,
+        page: 1,
+        limit: 50,
+      };
+      this.inside.loading = true;
+      getSelectVideo(data).then((res) => {
+        this.inside.options = res.data.data.map((item) => {
+          return { value: `${item.id}`, label: `${item.name}` };
+        });
+        this.inside.loading = false;
+      });
     },
     hideDialog() {
       this.addDialog.centerDialogVisible = false;
@@ -200,20 +307,27 @@ export default {
         is_show: "1",
         imageUrl: "",
         sort: "",
-        video_id: [],
+        // video_id: [],
       };
-      this.videoList = [];
+      this.inside={
+        innerVisible: false,
+        options: [],
+        list: [],
+        loading: false,
+      }
+      // this.videoList = [];
+    },
+    handleClose(tag) {
+      this.tags.splice(this.tags.indexOf(tag), 1);
     },
     //图片上传
     handleAvatarSuccess(param) {
-      console.log(param.file);
       let data = new window.FormData();
       data.append("uploadType", "form");
       data.append("uploadfiles", param.file);
       data.append("type", "popupadv");
       data.append("opt", "single");
       data.append("token", getToken());
-      console.log(data);
       this.$axios.post("api/Common/uploadImg", data).then((res) => {
         if (res.data.code == 0) {
           this.$message({
@@ -224,12 +338,21 @@ export default {
         }
       });
     },
-    filterMethod(query, item) {
-      return item.label.indexOf(query) > -1
-      console.log(query,2222)
-    },
-    handleChange(value, direction, movedKeys){
-      console.log(value,direction,movedKeys,22222)
+    //添加
+    addVideo() {
+      let arr = this.tags.filter((res) => {
+        return res.id == this.videoItme.id;
+      });
+      if (arr.length > 0) {
+        this.$message({
+          message: "视频已添加",
+        });
+      } else {
+        this.tags.push({
+          name: this.videoItme.name,
+          id: this.videoItme.id,
+        });
+      }
     },
     //提交
     confirm() {
@@ -240,16 +363,24 @@ export default {
               message: "请上传图片",
               type: "info",
             });
+          } else if (this.tags.length == 0) {
+            this.$message({
+              message: "请添加视频id串",
+              type: "info",
+            });
           } else {
+            let video_id = [];
+            this.tags.forEach((res) => {
+              video_id.push(res.id);
+            });
             let data = {
               name: this.form.name,
-              video_id: this.form.video_id.join(","),
+              video_id:video_id.join(","),
               is_show: this.form.is_show,
               img_url: this.form.imageUrl,
               sort: this.form.sort,
               type: this.form.type,
             };
-            console.log(data);
             // return;
             if (this.addDialog.dialogType == "edit") {
               data.id = this.addDialog.id;
@@ -341,5 +472,12 @@ export default {
 .uploadMsg div {
   line-height: 20px;
   color: red;
+}
+.itemList {
+  border: 1px solid #eee;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  min-height: 60px;
 }
 </style>
