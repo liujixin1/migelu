@@ -16,8 +16,8 @@ function endLoading() { //使用Element loading-close 方法
 }
 // create an axios instance
 const service = axios.create({
-    // baseURL: 'http://api.app.mhsys.cn/', // url = base url + request url 正式
-    baseURL: 'http://mglapp.api.hihill.cn/index.php/', // url = base url + request url 测试
+    // baseURL: 'http://api.app.mhsys.cn/', // 正式
+    baseURL: 'http://mglapp.api.hihill.cn/index.php/', // 测试
 
     // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
