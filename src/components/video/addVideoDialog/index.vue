@@ -34,6 +34,7 @@
             <el-image style="width:200px" v-if="imgStatus" :src="imgUrl"></el-image>
             <div id="img_container">
               <el-button id="imgPickfiles" type="primary">选择照片</el-button>
+            <div class="uploadMsg">图片应小于200KB，尺寸为161*97，格式为PNG格式。</div>
               <div></div>
             </div>
           </div>
@@ -522,6 +523,11 @@ export default {
   margin-top: 10px;
 }
 .uploadMsg div {
+  line-height: 20px;
+  color: red;
+}
+.uploadMsg {
+  margin-top: 10px;
   line-height: 20px;
   color: red;
 }

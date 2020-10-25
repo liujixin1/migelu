@@ -39,8 +39,7 @@
             </el-upload>
           </div>
           <div class="uploadMsg">
-            <div>全屏图片应小于200KB，尺寸为670*260，格式为PNG格式。</div>
-            <div>居中小图应小于200KB，尺寸为320*186，格式为PNG格式。</div>
+            <div>图片应小于200KB，尺寸为670*260，格式为PNG格式。</div>
           </div>
         </el-form-item>
       </el-form>
